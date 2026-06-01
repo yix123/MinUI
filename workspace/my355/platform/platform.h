@@ -137,7 +137,6 @@ extern int on_hdmi;
 
 #define SDCARD_PATH "/mnt/SDCARD"
 #define MUTE_VOLUME_RAW 0
-#define HAS_SLEEP_TIMEOUT_SETTING 1
 // #define HAS_NEON
 #define SAMPLES 400 // fix for (most) fceumm underruns
 

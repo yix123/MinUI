@@ -15,14 +15,12 @@
 ///////////////////////////////////////
 
 #define SETTINGS_VERSION 2
-#define DEFAULT_SLEEP_TIMEOUT 120000
 typedef struct Settings {
 	int version; // future proofing
 	int brightness;
 	int headphones;
 	int speaker;
-	int sleep_timeout;
-	int unused[1]; // for future use
+	int unused[2]; // for future use
 	// NOTE: doesn't really need to be persisted but still needs to be shared
 	int jack; 
 	int hdmi; 
@@ -32,7 +30,6 @@ static Settings DefaultSettings = {
 	.brightness = 2,
 	.headphones = 4,
 	.speaker = 8,
-	.sleep_timeout = DEFAULT_SLEEP_TIMEOUT,
 	.jack = 0,
 	.hdmi = 0,
 };
@@ -259,19 +256,3 @@ void SetHDMI(int value) {
 
 int GetMute(void) { return 0; }
 void SetMute(int value) {}
-
-int GetSleepTimeout(void) {
-	switch (settings->sleep_timeout) {
-		case 120000:
-		case 900000:
-		case 3600000:
-		case 43200000:
-			return settings->sleep_timeout;
-		default:
-			return DEFAULT_SLEEP_TIMEOUT;
-	}
-}
-void SetSleepTimeout(int value) {
-	settings->sleep_timeout = value;
-	SaveSettings();
-}

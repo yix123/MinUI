@@ -648,7 +648,6 @@ static char* max_ff_labels[] = {
 	"8x",
 	NULL,
 };
-#ifdef HAS_SLEEP_TIMEOUT_SETTING
 static char* sleep_timeout_labels[] = {
 	"2 min",
 	"15 min",
@@ -662,7 +661,6 @@ static int sleep_timeout_values[] = {
 	3600000,
 	43200000,
 };
-#endif
 
 ///////////////////////////////
 
@@ -675,6 +673,7 @@ enum {
 	FE_OPT_THREAD,
 	FE_OPT_DEBUG,
 	FE_OPT_MAXFF,
+	FE_OPT_SLEEP_TIMEOUT,
 	FE_OPT_COUNT,
 };
 
@@ -933,6 +932,16 @@ static struct Config {
 				.values = max_ff_labels,
 				.labels = max_ff_labels,
 			},
+			[FE_OPT_SLEEP_TIMEOUT] = {
+				.key	= "minarch_sleep_timeout",
+				.name	= "Sleep Timeout",
+				.desc	= "Power off after this long in sleep.",
+				.default_value = 0,
+				.value = 0,
+				.count = 4,
+				.values = sleep_timeout_labels,
+				.labels = sleep_timeout_labels,
+			},
 			[FE_OPT_COUNT] = {NULL}
 		}
 	},
@@ -1030,6 +1039,10 @@ static void Config_syncFrontend(char* key, int value) {
 	else if (exactMatch(key,config.frontend.options[FE_OPT_MAXFF].key)) {
 		max_ff_speed = value;
 		i = FE_OPT_MAXFF;
+	}
+	else if (exactMatch(key,config.frontend.options[FE_OPT_SLEEP_TIMEOUT].key)) {
+		PWR_setSleepTimeout(sleep_timeout_values[value]);
+		i = FE_OPT_SLEEP_TIMEOUT;
 	}
 	if (i==-1) return;
 	Option* option = &config.frontend.options[i];
@@ -3578,38 +3591,6 @@ static int OptionQuicksave_onConfirm(MenuList* list, int i) {
 	PWR_powerOff();
 }
 
-#ifdef HAS_SLEEP_TIMEOUT_SETTING
-static int OptionSleepTimeout_getValue(void) {
-	int sleep_timeout = GetSleepTimeout();
-	for (int i=0; sleep_timeout_labels[i]; i++) {
-		if (sleep_timeout_values[i]==sleep_timeout) return i;
-	}
-	return 0;
-}
-static int OptionSleepTimeout_optionChanged(MenuList* list, int i) {
-	MenuItem* item = &list->items[i];
-	SetSleepTimeout(sleep_timeout_values[item->value]);
-	return MENU_CALLBACK_NOP;
-}
-static MenuList OptionSettings_menu = {
-	.type = MENU_VAR,
-	.on_change = OptionSleepTimeout_optionChanged,
-	.items = (MenuItem[]) {
-		{
-			"Sleep Timeout",
-			"Power off after this long in sleep.",
-			sleep_timeout_labels,
-		},
-		{NULL},
-	}
-};
-static int OptionSettings_openMenu(MenuList* list, int i) {
-	OptionSettings_menu.items[0].value = OptionSleepTimeout_getValue();
-	Menu_options(&OptionSettings_menu);
-	return MENU_CALLBACK_NOP;
-}
-#endif
-
 static MenuList options_menu = {
 	.type = MENU_LIST,
 	.items = (MenuItem[]) {
@@ -3617,9 +3598,6 @@ static MenuList options_menu = {
 		{"Emulator",.on_confirm=OptionEmulator_openMenu},
 		{"Controls",.on_confirm=OptionControls_openMenu},
 		{"Shortcuts",.on_confirm=OptionShortcuts_openMenu}, 
-#ifdef HAS_SLEEP_TIMEOUT_SETTING
-		{"Settings",.on_confirm=OptionSettings_openMenu},
-#endif
 		{"Save Changes",.on_confirm=OptionSaveChanges_openMenu},
 		{NULL},
 		{NULL},

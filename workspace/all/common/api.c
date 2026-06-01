@@ -20,13 +20,6 @@
 
 ///////////////////////////////
 
-#ifndef HAS_SLEEP_TIMEOUT_SETTING
-#define DEFAULT_SLEEP_TIMEOUT 900000
-int GetSleepTimeout(void) { return DEFAULT_SLEEP_TIMEOUT; }
-#endif
-
-///////////////////////////////
-
 void LOG_note(int level, const char* fmt, ...) {
 	char buf[1024] = {0};
 	va_list args;
@@ -89,6 +82,7 @@ static struct PWR_Context {
 	int is_charging;
 	int charge;
 	int should_warn;
+	int sleep_timeout;
 
 	SDL_Surface* overlay;
 } pwr = {0};
@@ -1485,6 +1479,7 @@ void PWR_init(void) {
 	
 	pwr.should_warn = 0;
 	pwr.charge = PWR_LOW_CHARGE;
+	pwr.sleep_timeout = 120000;
 	
 	PWR_initOverlay();
 
@@ -1683,7 +1678,7 @@ static void PWR_waitForWake(void) {
 			break;
 		}
 		SDL_Delay(200);
-		int sleep_timeout = GetSleepTimeout();
+		int sleep_timeout = pwr.sleep_timeout;
 		if (sleep_timeout && pwr.can_poweroff && SDL_GetTicks()-sleep_ticks>=sleep_timeout) {
 			if (pwr.is_charging) sleep_ticks += 60000; // check again in a minute
 			else PWR_powerOff();
@@ -1709,6 +1704,9 @@ void PWR_enableAutosleep(void) {
 }
 int PWR_preventAutosleep(void) {
 	return pwr.is_charging || !pwr.can_autosleep || GetHDMI();
+}
+void PWR_setSleepTimeout(int milliseconds) {
+	pwr.sleep_timeout = milliseconds;
 }
 
 // updated by PWR_updateBatteryStatus()
