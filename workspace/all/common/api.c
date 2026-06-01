@@ -20,6 +20,13 @@
 
 ///////////////////////////////
 
+#ifndef HAS_SLEEP_TIMEOUT_SETTING
+#define DEFAULT_SLEEP_TIMEOUT 900000
+int GetSleepTimeout(void) { return DEFAULT_SLEEP_TIMEOUT; }
+#endif
+
+///////////////////////////////
+
 void LOG_note(int level, const char* fmt, ...) {
 	char buf[1024] = {0};
 	va_list args;
@@ -1676,7 +1683,8 @@ static void PWR_waitForWake(void) {
 			break;
 		}
 		SDL_Delay(200);
-		if (pwr.can_poweroff && SDL_GetTicks()-sleep_ticks>=900000) { // hibernate after fifteen minutes
+		int sleep_timeout = GetSleepTimeout();
+		if (sleep_timeout && pwr.can_poweroff && SDL_GetTicks()-sleep_ticks>=sleep_timeout) {
 			if (pwr.is_charging) sleep_ticks += 60000; // check again in a minute
 			else PWR_powerOff();
 		}

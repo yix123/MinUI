@@ -648,6 +648,21 @@ static char* max_ff_labels[] = {
 	"8x",
 	NULL,
 };
+#ifdef HAS_SLEEP_TIMEOUT_SETTING
+static char* sleep_timeout_labels[] = {
+	"2 min",
+	"15 min",
+	"60 min",
+	"12 hr",
+	NULL,
+};
+static int sleep_timeout_values[] = {
+	120000,
+	900000,
+	3600000,
+	43200000,
+};
+#endif
 
 ///////////////////////////////
 
@@ -3563,6 +3578,38 @@ static int OptionQuicksave_onConfirm(MenuList* list, int i) {
 	PWR_powerOff();
 }
 
+#ifdef HAS_SLEEP_TIMEOUT_SETTING
+static int OptionSleepTimeout_getValue(void) {
+	int sleep_timeout = GetSleepTimeout();
+	for (int i=0; sleep_timeout_labels[i]; i++) {
+		if (sleep_timeout_values[i]==sleep_timeout) return i;
+	}
+	return 0;
+}
+static int OptionSleepTimeout_optionChanged(MenuList* list, int i) {
+	MenuItem* item = &list->items[i];
+	SetSleepTimeout(sleep_timeout_values[item->value]);
+	return MENU_CALLBACK_NOP;
+}
+static MenuList OptionSettings_menu = {
+	.type = MENU_VAR,
+	.on_change = OptionSleepTimeout_optionChanged,
+	.items = (MenuItem[]) {
+		{
+			"Sleep Timeout",
+			"Power off after this long in sleep.",
+			sleep_timeout_labels,
+		},
+		{NULL},
+	}
+};
+static int OptionSettings_openMenu(MenuList* list, int i) {
+	OptionSettings_menu.items[0].value = OptionSleepTimeout_getValue();
+	Menu_options(&OptionSettings_menu);
+	return MENU_CALLBACK_NOP;
+}
+#endif
+
 static MenuList options_menu = {
 	.type = MENU_LIST,
 	.items = (MenuItem[]) {
@@ -3570,6 +3617,9 @@ static MenuList options_menu = {
 		{"Emulator",.on_confirm=OptionEmulator_openMenu},
 		{"Controls",.on_confirm=OptionControls_openMenu},
 		{"Shortcuts",.on_confirm=OptionShortcuts_openMenu}, 
+#ifdef HAS_SLEEP_TIMEOUT_SETTING
+		{"Settings",.on_confirm=OptionSettings_openMenu},
+#endif
 		{"Save Changes",.on_confirm=OptionSaveChanges_openMenu},
 		{NULL},
 		{NULL},
@@ -3578,7 +3628,12 @@ static MenuList options_menu = {
 };
 
 static void OptionSaveChanges_updateDesc(void) {
-	options_menu.items[4].desc = getSaveDesc();
+	for (int i=0; options_menu.items[i].name; i++) {
+		if (options_menu.items[i].on_confirm==OptionSaveChanges_openMenu) {
+			options_menu.items[i].desc = getSaveDesc();
+			break;
+		}
+	}
 }
 
 #define OPTION_PADDING 8

@@ -22,4 +22,7 @@ void SetHDMI(int value); // 0-1
 int GetMute(void);
 void SetMute(int value); // 0-1
 
+int GetSleepTimeout(void); // milliseconds
+void SetSleepTimeout(int value); // milliseconds
+
 #endif  // __msettings_h__
