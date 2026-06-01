@@ -6,12 +6,14 @@ void QuitSettings(void);
 
 int GetBrightness(void);
 int GetVolume(void);
+int GetSleepTimeout(void);
 
 void SetRawBrightness(int value); // 0-1024
 void SetRawVolume(int value); // 0-40
 
 void SetBrightness(int value); // 0-10
 void SetVolume(int value); // 0-20
+void SetSleepTimeout(int value); // milliseconds
 
 int GetJack(void);
 void SetJack(int value); // 0-1

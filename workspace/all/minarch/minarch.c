@@ -648,19 +648,6 @@ static char* max_ff_labels[] = {
 	"8x",
 	NULL,
 };
-static char* sleep_timeout_labels[] = {
-	"2 min",
-	"15 min",
-	"60 min",
-	"12 hr",
-	NULL,
-};
-static int sleep_timeout_values[] = {
-	120000,
-	900000,
-	3600000,
-	43200000,
-};
 
 ///////////////////////////////
 
@@ -673,7 +660,6 @@ enum {
 	FE_OPT_THREAD,
 	FE_OPT_DEBUG,
 	FE_OPT_MAXFF,
-	FE_OPT_SLEEP_TIMEOUT,
 	FE_OPT_COUNT,
 };
 
@@ -932,16 +918,6 @@ static struct Config {
 				.values = max_ff_labels,
 				.labels = max_ff_labels,
 			},
-			[FE_OPT_SLEEP_TIMEOUT] = {
-				.key	= "minarch_sleep_timeout",
-				.name	= "Sleep Timeout",
-				.desc	= "Power off after this long in sleep.",
-				.default_value = 0,
-				.value = 0,
-				.count = 4,
-				.values = sleep_timeout_labels,
-				.labels = sleep_timeout_labels,
-			},
 			[FE_OPT_COUNT] = {NULL}
 		}
 	},
@@ -1039,10 +1015,6 @@ static void Config_syncFrontend(char* key, int value) {
 	else if (exactMatch(key,config.frontend.options[FE_OPT_MAXFF].key)) {
 		max_ff_speed = value;
 		i = FE_OPT_MAXFF;
-	}
-	else if (exactMatch(key,config.frontend.options[FE_OPT_SLEEP_TIMEOUT].key)) {
-		PWR_setSleepTimeout(sleep_timeout_values[value]);
-		i = FE_OPT_SLEEP_TIMEOUT;
 	}
 	if (i==-1) return;
 	Option* option = &config.frontend.options[i];

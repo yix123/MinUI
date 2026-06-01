@@ -20,7 +20,8 @@ typedef struct Settings {
 	int brightness;
 	int headphones;
 	int speaker;
-	int unused[2]; // for future use
+	int sleep_timeout;
+	int unused[1]; // for future use
 	// NOTE: doesn't really need to be persisted but still needs to be shared
 	int jack; 
 	int hdmi; 
@@ -30,6 +31,7 @@ static Settings DefaultSettings = {
 	.brightness = 2,
 	.headphones = 4,
 	.speaker = 8,
+	.sleep_timeout = 120000,
 	.jack = 0,
 	.hdmi = 0,
 };
@@ -109,16 +111,13 @@ void InitSettings(void) {
 		// we created it so set initial size and populate
 		ftruncate(shm_fd, shm_size);
 		settings = mmap(NULL, shm_size, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
-		
+		memcpy(settings, &DefaultSettings, shm_size);
+
 		int fd = open(SettingsPath, O_RDONLY);
 		if (fd>=0) {
 			read(fd, settings, shm_size);
 			// TODO: use settings->version for future proofing?
 			close(fd);
-		}
-		else {
-			// load defaults
-			memcpy(settings, &DefaultSettings, shm_size);
 		}
 		
 		// these shouldn't be persisted
@@ -184,6 +183,24 @@ void SetBrightness(int value) {
 
 int GetVolume(void) { // 0-20
 	return settings->jack ? settings->headphones : settings->speaker;
+}
+static int normalizeSleepTimeout(int value) {
+	switch (value) {
+		case 120000:
+		case 900000:
+		case 3600000:
+		case 43200000:
+			return value;
+		default:
+			return DefaultSettings.sleep_timeout;
+	}
+}
+int GetSleepTimeout(void) {
+	return normalizeSleepTimeout(settings->sleep_timeout);
+}
+void SetSleepTimeout(int value) {
+	settings->sleep_timeout = normalizeSleepTimeout(value);
+	SaveSettings();
 }
 void SetVolume(int value) {
 	if (settings->hdmi) return;

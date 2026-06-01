@@ -54,6 +54,8 @@ system:
 	cp ./workspace/all/say/build/$(PLATFORM)/say.elf ./build/SYSTEM/$(PLATFORM)/bin/
 	cp ./workspace/all/clock/build/$(PLATFORM)/clock.elf ./build/EXTRAS/Tools/$(PLATFORM)/Clock.pak/
 	cp ./workspace/all/minput/build/$(PLATFORM)/minput.elf ./build/EXTRAS/Tools/$(PLATFORM)/Input.pak/
+	mkdir -p "./build/EXTRAS/Tools/$(PLATFORM)/Sleep Timeout.pak/"
+	cp ./workspace/all/sleeptime/build/$(PLATFORM)/sleeptime.elf "./build/EXTRAS/Tools/$(PLATFORM)/Sleep Timeout.pak/"
 
 cores: # TODO: can't assume every platform will have the same stock cores (platform should be responsible for copy too)
 	# stock cores

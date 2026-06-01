@@ -290,7 +290,6 @@ void PWR_enableSleep(void);
 void PWR_disableAutosleep(void);
 void PWR_enableAutosleep(void);
 int PWR_preventAutosleep(void);
-void PWR_setSleepTimeout(int milliseconds);
 
 int PWR_isCharging(void);
 int PWR_getBattery(void);
