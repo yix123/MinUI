@@ -39,11 +39,11 @@ git remote add upstream https://github.com/shauninman/MinUI.git
 git -C toolchains/my355-toolchain remote add upstream https://github.com/shauninman/union-my355-toolchain.git
 ```
 
-After forking on GitHub, use personal remotes such as:
+Personal remotes currently point at the `yix123` forks:
 
 ```sh
-git remote set-url origin git@github.com:jakeliang/MinUI.git
-git -C toolchains/my355-toolchain remote set-url origin git@github.com:jakeliang/union-my355-toolchain.git
+git remote set-url origin git@github.com:yix123/MinUI.git
+git -C toolchains/my355-toolchain remote set-url origin git@github.com:yix123/union-my355-toolchain.git
 ```
 
-If using HTTPS instead of SSH, replace the URLs with `https://github.com/jakeliang/...`.
+If using HTTPS instead of SSH, replace the URLs with `https://github.com/yix123/...`.
