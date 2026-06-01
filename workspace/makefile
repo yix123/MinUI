@@ -22,7 +22,9 @@ all:
 	cd ./all/minarch/ && make
 	cd ./all/clock/ && make
 	cd ./all/minput/ && make
+ifeq ($(PLATFORM),my355)
 	cd ./all/sleeptime/ && make
+endif
 	cd ./all/syncsettings/ && make
 	cd ./all/say/ && make
 	cd ./$(PLATFORM)/cores && make
@@ -35,7 +37,9 @@ clean:
 	cd ./all/minarch/ && make clean
 	cd ./all/clock/ && make clean
 	cd ./all/minput/ && make clean
+ifeq ($(PLATFORM),my355)
 	cd ./all/sleeptime/ && make clean
+endif
 	cd ./all/syncsettings/ && make clean
 	cd ./all/say/ && make clean
 	cd ./$(PLATFORM) && make clean

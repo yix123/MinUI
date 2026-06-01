@@ -1676,7 +1676,11 @@ static void PWR_waitForWake(void) {
 			break;
 		}
 		SDL_Delay(200);
+#ifdef HAS_SLEEP_TIMEOUT_SETTING
 		int sleep_timeout = GetSleepTimeout();
+#else
+		int sleep_timeout = 120000;
+#endif
 		if (sleep_timeout && pwr.can_poweroff && SDL_GetTicks()-sleep_ticks>=sleep_timeout) {
 			if (pwr.is_charging) sleep_ticks += 60000; // check again in a minute
 			else PWR_powerOff();

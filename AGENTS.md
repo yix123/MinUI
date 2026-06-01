@@ -4,7 +4,7 @@ This checkout tracks the `yix123/MinUI` fork and is used for building MinUI for 
 
 ## Local changes to preserve
 
-- MinUI hibernate delay is changed in `workspace/all/common/api.c` from `120000` ms to `900000` ms so faux sleep powers off after 15 minutes instead of 2 minutes.
+- `my355` sleep timeout is configurable globally from `Tools/my355/Sleep Timeout.pak`; the selected value is stored in `msettings.bin` and used by both MinUI and MinArch.
 - `workspace/my355/cores/patches/fake-08.patch` was updated for current upstream `fake-08`: the patched load path calls `_vm->Step()` instead of the removed `_vm->UpdateAndDraw()`.
 - `workspace/all/cores/patches/pokemini/0001-fix-resume-audio.patch` was updated for current upstream `PokeMini`: the old `source/PokeMini.c` `"LCD-"` to `"AUD-"` hunk is already upstream, so only the deferred unserialize patch remains.
 - The `yix123/union-my355-toolchain` Dockerfile in `toolchains/my355-toolchain` supports Intel/x86_64 Docker hosts by enabling Debian `arm64` multiarch and installing the aarch64 cross compiler plus arm64 SDL/zlib/lzma/lzo/lz4/zstd runtime/dev packages.
