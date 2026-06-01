@@ -6,7 +6,7 @@ index d95ccb6cab52abfe7620ff84dd5cbb450bafe750..24687335ad410096aa48f29e13dcb479
      else {
          _vm->QueueCartChange(info->path);
      }
-+	_vm->UpdateAndDraw();
++	_vm->Step();
  
      return true;
  }
