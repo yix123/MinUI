@@ -3578,12 +3578,7 @@ static MenuList options_menu = {
 };
 
 static void OptionSaveChanges_updateDesc(void) {
-	for (int i=0; options_menu.items[i].name; i++) {
-		if (options_menu.items[i].on_confirm==OptionSaveChanges_openMenu) {
-			options_menu.items[i].desc = getSaveDesc();
-			break;
-		}
-	}
+	options_menu.items[4].desc = getSaveDesc();
 }
 
 #define OPTION_PADDING 8
